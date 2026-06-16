@@ -1,0 +1,33 @@
+version: 0.2
+
+env:
+  variables:
+    DOCKER_IMAGE: "python-app"
+
+  parameter-store:
+    DOCKER_USER: /Python-App/Docker-Credentials/Username
+    DOCKER_PSWD: /Python-App/Docker-Credentials/Password
+
+phases:
+  pre_build:
+    commands:
+      - echo "Entered the pre_build phase..."
+      - IMAGE_TAG="${CODEBUILD_RESOLVED_SOURCE_VERSION:0:7}-b${CODEBUILD_BUILD_NUMBER}"
+      - echo "IMAGE_TAG=$IMAGE_TAG"
+      - echo "$DOCKER_PSWD" | docker login -u "$DOCKER_USER" --password-stdin
+
+  build:
+    commands:
+      - echo "Entered the build phase..."
+      - docker build -t "$DOCKER_USER/$DOCKER_IMAGE:$IMAGE_TAG" .
+      - docker push "$DOCKER_USER/$DOCKER_IMAGE:$IMAGE_TAG"
+
+  post_build:
+    commands:
+      - echo "Entered the post_build phase..."
+      - echo "Build completed on $(date)"
+
+artifacts:
+  files:
+    - "**/*"
+  base-directory: Python-App
