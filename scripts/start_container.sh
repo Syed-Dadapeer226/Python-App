@@ -2,7 +2,7 @@
 
 echo "Running start container script..."
 
-IMAGE="syeddadapeer226/pathnex-app"
+IMAGE="syeddadapeer226/python-app"
 
 # Function
 docker_run() {
